@@ -66,32 +66,32 @@ class World {
 class Position {
     private:
         //Ints for x and y
-        int x, y;
+        int Xpos, Ypos;
         //World the position is located in
         World* inside;
 
     public:
         //Constructors
         Position() {
-            x = 0;
-            y = 0;
+            Xpos = 0;
+            Ypos = 0;
         }
         Position(World* w) {
-            x = 0;
-            y = 0;
+            Xpos = 0;
+            Ypos = 0;
             inside = w;
         }
 
         //Adjust the values
         void adjustX(int amount) {
-            x += amount;
+            Xpos += amount;
         }
         void adjustY(int amount) {
-            y += amount;
+            Ypos += amount;
         }
         void moveTo(Position p) {
-            x = p.getX();
-            y = p.getY();
+            Xpos = p.getX();
+            Ypos = p.getY();
             inside = p.inWorld();
         }
         void changeWorld(World* w) {
@@ -100,10 +100,10 @@ class Position {
 
         //Get the values
         int getX() {
-            return x;
+            return Xpos;
         }
         int getY() {
-            return y;
+            return Ypos;
         }
         World* inWorld() {
             return inside;
@@ -131,9 +131,9 @@ class Creature {
             return position.inWorld();
         }
         Creature* createCreature() {
-            Creature* newCreature;
+            Creature* newCreature = NULL;
             if(events->createCreature()) {
-                Creature* newCreature = new Creature();
+                newCreature = new Creature();
                 if(&position != NULL) {
                     newCreature->move(position);
                     newCreature->position.adjustX(1);
@@ -156,7 +156,7 @@ class Creature {
 };
 
 Creature* World::createCreature() {
-    Creature* newCreature;
+    Creature* newCreature = NULL;
     if(event->createCreature()) {
         newCreature = new Creature();
         newCreature->setWorld(this);
@@ -178,16 +178,18 @@ int main() {
 
     //Do the have kids?
     Creature* newKid = creatureOne->createCreature();
-    while(&newKid == NULL) {
+    while(newKid == NULL) {
         cout << "Failed to creature creature from creature" << endl;
         newKid = creatureOne->createCreature();
     }
+    cout << "Created a new child at " << newKid->getPosition().getX() << ", " << newKid->getPosition().getY() << endl;
 
     //Does the world have kids?
     newKid = w->createCreature();
-    while(&newKid == NULL) {
+    while(newKid == NULL) {
         cout << "Failed to creature creature from world" << endl;
-        newKid = creatureOne->createCreature();
+        newKid = w->createCreature();
     }
+    cout << "Created a new child at " << newKid->getPosition().getX() << ", " << newKid->getPosition().getY() << endl;
     
 }
